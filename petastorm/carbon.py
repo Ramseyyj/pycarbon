@@ -1,3 +1,5 @@
+import os
+
 import pyarrow as pa
 from pyarrow.filesystem import (_get_fs_from_path)
 from pyarrow.parquet import ParquetFile
@@ -41,7 +43,10 @@ class CarbonDatasetPiece(object):
 
     def read_all(self, columns):
         # rebuilding the reader as need to read specific columns
-        carbon_reader = CarbonReader().builder().withFile(self.path).projection(columns).build()
+        if os.path.isdir(self.path):
+            carbon_reader = CarbonReader().builder().withFolder(self.path).projection(columns).build()
+        else:
+            carbon_reader = CarbonReader().builder().withFile(self.path).projection(columns).build()
         data = carbon_reader.read(self.schema)
         carbon_reader.close()
         return data
