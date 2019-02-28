@@ -7,8 +7,8 @@ class CarbonSchemaReader(object):
         if (getAsBuffer == True):
             return self.carbonSchemaReader.getSchemaAsBytes(path)
         if (len(para) == 0):
-            return self.carbonSchemaReader.readSchema(path)
+            return self.carbonSchemaReader.readSchema(path).asOriginOrder()
         if (len(para) == 1):
-            return self.carbonSchemaReader.readSchema(path, para[0])
+            return self.carbonSchemaReader.readSchema(path, para[0]).asOriginOrder()
         if (len(para) == 2):
-            return self.carbonSchemaReader.readSchema(path, para[0], para[1])
+            return self.carbonSchemaReader.readSchema(path, para[0], para[1]).asOriginOrder()

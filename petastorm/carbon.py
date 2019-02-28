@@ -15,7 +15,7 @@ class CarbonDataset(object):
         carbon_splits = CarbonReader().builder().withFolder(self.path).getSplits()
         carbon_schema = CarbonSchemaReader().readSchema(self.path)
         for split in carbon_splits:
-            self.pieces.append(CarbonDatasetPiece(split, carbon_schema))
+            self.pieces.append(CarbonDatasetPiece(split))
         self.number_of_splits = len(self.pieces)
         self.schema = self.getArrowSchema()
         # TODO add mechanism to get the file path based on file filter
@@ -35,19 +35,21 @@ class CarbonDataset(object):
 
 
 class CarbonDatasetPiece(object):
-    def __init__(self, path, schema):
+    def __init__(self, path):
         self.path = path
-        self.schema = schema
         # TODO get record count from carbonapp based on file
         self.num_rows = 10000
 
     def read_all(self, columns):
         # rebuilding the reader as need to read specific columns
-        if os.path.isdir(self.path):
-            carbon_reader = CarbonReader().builder().withFolder(self.path).projection(columns).build()
-        else:
-            carbon_reader = CarbonReader().builder().withFile(self.path).projection(columns).build()
-        data = carbon_reader.read(self.schema)
+        #TODO: remove hardcoding and fix this issue
+        columns = ["imageId","imageName","imageBinary", "txtName", "txtContent"]
+        carbon_reader_builder = CarbonReader().builder().withFile(self.path)
+        if columns is not None:
+            carbon_reader_builder = carbon_reader_builder.projection(columns)
+        carbon_reader = carbon_reader_builder.build()
+        schema = CarbonSchemaReader().readSchema(self.path).asOriginOrder()
+        data = carbon_reader.read(schema)
         carbon_reader.close()
         return data
 
