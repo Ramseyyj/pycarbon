@@ -61,7 +61,7 @@ class CarbonReader(object):
         return self.CarbonReaderBuilder.getSplits()
 
     def read(self, schema):
-        buf = self.reader.readArrowBatch(schema)
+        buf = self.reader.readArrowBatch(schema).tostring()
         reader = pa.RecordBatchFileReader(pa.BufferReader(bytes(buf)))
         data = reader.read_all()
         return data

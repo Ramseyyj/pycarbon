@@ -29,7 +29,7 @@ class CarbonDataset(object):
             self.common_metadata = None
 
     def getArrowSchema(self):
-        buf = CarbonSchemaReader().readSchema(self.path, True)
+        buf = CarbonSchemaReader().readSchema(self.path, True).tostring()
         reader = pa.RecordBatchFileReader(pa.BufferReader(bytes(buf)))
         return reader.read_all().schema
 
