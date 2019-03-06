@@ -24,15 +24,23 @@ import time
 
 import jnius_config
 
-from petastorm import make_carbon_reader
+from petastorm import make_carbon_reader, make_batch_carbon_reader
 
 
 def just_read(dataset_url):
-    with make_carbon_reader(dataset_url, num_epochs=1) as train_reader:
+    with make_carbon_reader(dataset_url, num_epochs=1, workers_count=16) as train_reader:
         i = 0
         for schema_view in train_reader:
             # print(schema_view.imagename)
             i = i + 1
+        print(i)
+
+def just_read_batch(dataset_url):
+    with make_batch_carbon_reader(dataset_url, num_epochs=1, workers_count=16) as train_reader:
+        i = 0
+        for schema_view in train_reader:
+            # print(schema_view.imagename)
+            i += len(schema_view.imagename)
         print(i)
 
 def main():
@@ -42,10 +50,13 @@ def main():
     # TODO: fill this in argument
     jnius_config.set_classpath(
         "/home/root1/Documents/ab/workspace/historm_xubo/historm/store/sdk/target/carbondata-sdk.jar")
+    jnius_config.add_options('-Xrs', '-Xmx6096m')
+    # jnius_config.add_options('-Xrs', '-Xmx6096m', '-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5555')
     print("Start")
     start = time.time()
 
-    just_read("file:///home/root1/Documents/ab/workspace/historm_xubo/historm/store/sdk/target/voc/")
+    # just_read("file:///home/root1/Documents/ab/workspace/historm_xubo/historm/store/sdk/target/voc/")
+    just_read_batch("file:///home/root1/Documents/ab/workspace/historm_xubo/historm/store/sdk/target/voc/")
 
     end = time.time()
     print("all time: " + str(end - start))

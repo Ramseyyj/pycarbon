@@ -15,7 +15,7 @@ class CarbonDataset(object):
         carbon_splits = CarbonReader().builder().withFolder(self.path).getSplits()
         carbon_schema = CarbonSchemaReader().readSchema(self.path)
         for split in carbon_splits:
-            self.pieces.append(CarbonDatasetPiece(split))
+            self.pieces.append(CarbonDatasetPiece(split, carbon_schema))
         self.number_of_splits = len(self.pieces)
         self.schema = self.getArrowSchema()
         # TODO add mechanism to get the file path based on file filter
@@ -35,8 +35,9 @@ class CarbonDataset(object):
 
 
 class CarbonDatasetPiece(object):
-    def __init__(self, path):
+    def __init__(self, path, carbon_schema):
         self.path = path
+        self.carbon_schema = carbon_schema
         # TODO get record count from carbonapp based on file
         self.num_rows = 10000
 
@@ -48,8 +49,7 @@ class CarbonDatasetPiece(object):
         if columns is not None:
             carbon_reader_builder = carbon_reader_builder.projection(columns)
         carbon_reader = carbon_reader_builder.build()
-        schema = CarbonSchemaReader().readSchema(self.path).asOriginOrder()
-        data = carbon_reader.read(schema)
+        data = carbon_reader.read(self.carbon_schema)
         carbon_reader.close()
         return data
 
