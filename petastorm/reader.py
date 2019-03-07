@@ -236,7 +236,7 @@ def make_reader(dataset_url,
 
 def make_carbon_reader(dataset_url,
                 schema_fields=None,
-                reader_pool_type='thread', workers_count=10, pyarrow_serialize=False, results_queue_size=50,
+                reader_pool_type='thread', workers_count=10, pyarrow_serialize=False, results_queue_size=1000,
                 shuffle_row_groups=True, shuffle_row_drop_partitions=1,
                 predicate=None,
                 rowgroup_selector=None,
@@ -1139,10 +1139,10 @@ class CarbonReader(object):
         #
         #     return min(shuffle_row_drop_partitions, max_rows_in_row_group)
         # return shuffle_row_drop_partitions
-        if shuffle_row_drop_partitions > 1 and len(carbonSplit.splits) > 0:
+        if shuffle_row_drop_partitions > 1 and carbonSplit.number_of_splits > 0:
             max_rows_in_row_group = 1
             for i in six.moves.xrange(carbonSplit.number_of_splits):
-                max_rows_in_row_group = max(max_rows_in_row_group, carbonSplit.splits(i).num_rows)
+                max_rows_in_row_group = max(max_rows_in_row_group, carbonSplit.pieces.__getitem__(i).num_rows)
             return min(shuffle_row_drop_partitions, max_rows_in_row_group)
         return shuffle_row_drop_partitions
 
