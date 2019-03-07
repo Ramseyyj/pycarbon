@@ -1002,7 +1002,7 @@ class CarbonReader(object):
         # 3. Filter rowgroups
 
         filtered_row_group_indexes = list(range(len(self.carbon_dataset.pieces)))
-        worker_predicate = None
+        worker_predicate = predicate
         # filtered_row_group_indexes, worker_predicate = self._filter_row_groups(self.dataset, row_groups, predicate,
         #                                                                        rowgroup_selector, cur_shard,
         #                                                                        shard_count)
