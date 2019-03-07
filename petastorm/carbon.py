@@ -43,13 +43,19 @@ class CarbonDatasetPiece(object):
 
     def read_all(self, columns):
         # rebuilding the reader as need to read specific columns
-        #TODO: remove hardcoding and fix this issue
-        columns = ["imageId","imageName","imageBinary", "txtName", "txtContent"]
         carbon_reader_builder = CarbonReader().builder().withFile(self.path)
+        carbon_schema_reader = CarbonSchemaReader()
         if columns is not None:
             carbon_reader_builder = carbon_reader_builder.projection(columns)
+            updatedSchema = carbon_schema_reader.reorderSchemaBasedOnProjection(columns, self.carbon_schema)
+        else:
+            # TODO Currenlty when projection is not added in carbon reader
+            # carbon returns record in dimensions+measures,but here we need based on actual schema order
+            # so for handling this adding projection columns based on schema
+            updatedSchema = self.carbon_schema
+            projection = carbon_schema_reader.getProjectionBasedOnSchema(updatedSchema)
+            carbon_reader_builder = carbon_reader_builder.projection(projection)
         carbon_reader = carbon_reader_builder.build()
-        data = carbon_reader.read(self.carbon_schema)
+        data = carbon_reader.read(updatedSchema)
         carbon_reader.close()
         return data
-
