@@ -236,7 +236,7 @@ def make_reader(dataset_url,
 
 def make_carbon_reader(dataset_url,
                 schema_fields=None,
-                reader_pool_type='thread', workers_count=10, pyarrow_serialize=False, results_queue_size=1000,
+                reader_pool_type='thread', workers_count=10, pyarrow_serialize=False, results_queue_size=100,
                 shuffle_row_groups=True, shuffle_row_drop_partitions=1,
                 predicate=None,
                 rowgroup_selector=None,
@@ -818,8 +818,8 @@ class Reader(object):
         (parquet partitioning)."""
 
         if predicate:
-            if not isinstance(predicate, PredicateBase):
-                raise ValueError('predicate parameter is expected to be derived from PredicateBase')
+            # if not isinstance(predicate, PredicateBase):
+            #     raise ValueError('predicate parameter is expected to be derived from PredicateBase')
             predicate_fields = predicate.get_fields()
 
             if set(predicate_fields) == dataset.partitions.partition_names:

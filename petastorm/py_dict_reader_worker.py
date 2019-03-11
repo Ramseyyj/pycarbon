@@ -330,9 +330,11 @@ class PyDictCarbonReaderWorker(WorkerBase):
                                                                        ', '.join(all_schema_names)))
 
         other_column_names = all_schema_names - predicate_column_names
+        other_column_names_list = list(other_column_names)
 
+        predicate_column_names_list = list(predicate_column_names)
         # Read columns needed for the predicate
-        predicate_rows = self._read_with_shuffle_row_drop(piece, predicate_column_names,
+        predicate_rows = self._read_with_shuffle_row_drop(piece, predicate_column_names_list,
                                                           shuffle_row_drop_partition)
 
         # Decode values
@@ -354,7 +356,7 @@ class PyDictCarbonReaderWorker(WorkerBase):
 
         if other_column_names:
             # Read remaining columns
-            other_rows = self._read_with_shuffle_row_drop(piece, other_column_names,
+            other_rows = self._read_with_shuffle_row_drop(piece, other_column_names_list,
                                                           shuffle_row_drop_partition)
 
             # Remove rows that were filtered out by the predicate
