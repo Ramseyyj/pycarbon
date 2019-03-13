@@ -28,7 +28,7 @@ from petastorm import make_carbon_reader, make_batch_carbon_reader
 
 
 def just_read(dataset_url):
-    with make_carbon_reader(dataset_url, num_epochs=1, workers_count=16) as train_reader:
+    with make_carbon_reader(dataset_url, num_epochs=1, workers_count=1) as train_reader:
         i = 0
         for schema_view in train_reader:
             # print(schema_view.imagename)
@@ -36,7 +36,7 @@ def just_read(dataset_url):
         print(i)
 
 def just_read_batch(dataset_url):
-    with make_batch_carbon_reader(dataset_url, num_epochs=1, workers_count=16) as train_reader:
+    with make_batch_carbon_reader(dataset_url, num_epochs=1, workers_count=1) as train_reader:
         i = 0
         for schema_view in train_reader:
             # print(schema_view.imagename)
@@ -55,8 +55,8 @@ def main():
     print("Start")
     start = time.time()
 
-    # just_read("file:///home/root1/Documents/ab/workspace/historm_xubo/historm/store/sdk/target/voc/")
-    just_read_batch("file:///home/root1/Documents/ab/workspace/historm_xubo/historm/store/sdk/target/voc/")
+    just_read("file:///home/root1/Documents/ab/workspace/historm_xubo/historm/store/sdk/target/voc/")
+    # just_read_batch("file:///home/root1/Documents/ab/workspace/historm_xubo/historm/store/sdk/target/voc/")
 
     end = time.time()
     print("all time: " + str(end - start))

@@ -1,3 +1,5 @@
+import time
+
 import pyarrow as pa
 
 class CarbonReader(object):
@@ -61,9 +63,13 @@ class CarbonReader(object):
         return self.CarbonReaderBuilder.getSplits()
 
     def read(self, schema):
+        start = time.time()
         buf = self.reader.readArrowBatch(schema).tostring()
+        print("arrow batch time " + str(time.time() - start))
+        start = time.time()
         reader = pa.RecordBatchFileReader(pa.BufferReader(bytes(buf)))
         data = reader.read_all()
+        print("arrow conversion time " + str(time.time() - start))
         return data
 
     def close(self):

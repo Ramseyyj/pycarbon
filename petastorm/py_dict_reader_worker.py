@@ -14,6 +14,7 @@
 from __future__ import division
 
 import hashlib
+import time
 
 import numpy as np
 from pyarrow import parquet as pq
@@ -278,7 +279,7 @@ class PyDictCarbonReaderWorker(WorkerBase):
             of partitions.
         :return:
         """
-
+        start = time.time()
         piece = self._split_pieces[piece_index]
 
         if not isinstance(self._local_cache, NullCache):
@@ -298,14 +299,17 @@ class PyDictCarbonReaderWorker(WorkerBase):
             #  3. Still leave relative path and the piece_index in plain text to make it easier to debug
             cache_key = '{}:{}:{}'.format(hashlib.md5(self._dataset_path.encode('utf-8')).hexdigest(),
                                           piece.path, piece_index)
+            start1 = time.time()
             all_cols = self._local_cache.get(cache_key,
                                              lambda: self._load_rows(piece, shuffle_row_drop_partition))
+            print("cache time is " + str(time.time() - start))
 
         if self._ngram:
             all_cols = self._ngram.form_ngram(data=all_cols, schema=self._schema)
 
         if all_cols:
             self.publish_func(all_cols)
+        print("process time is " + str(time.time() - start))
 
     def _load_rows_with_predicate(self, piece, worker_predicate, shuffle_row_drop_partition):
         """Loads all rows that match a predicate from a piece"""
@@ -384,9 +388,14 @@ class PyDictCarbonReaderWorker(WorkerBase):
         return [transform_func(utils.decode_row(row, self._schema)) for row in all_rows]
 
     def _read_with_shuffle_row_drop(self, piece, column_names, shuffle_row_drop_partition):
+        start = time.time()
         data_frame = piece.read_all(
             columns=column_names,
-        ).to_pandas()
+        )
+        print(" total piece time taken is " + str(time.time() - start))
+        start = time.time()
+        data_frame = data_frame.to_pandas()
+        print(" panda time is " + str(time.time() - start))
 
         num_rows = len(data_frame)
         num_partitions = shuffle_row_drop_partition[1]
