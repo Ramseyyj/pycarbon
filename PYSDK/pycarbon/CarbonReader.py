@@ -43,6 +43,10 @@ class CarbonReader(object):
         self.reader = self.CarbonReaderBuilder.build()
         return self
 
+    def build_with_split(self, input_split):
+        self.reader = self.CarbonReaderBuilder.buildWithSplits(input_split)
+        return self
+
     def splitAsArray(self, maxSplits):
         return self.reader.splitAsArray(maxSplits)
 
