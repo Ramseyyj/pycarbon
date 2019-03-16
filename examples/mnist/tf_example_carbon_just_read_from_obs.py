@@ -59,8 +59,8 @@ def main():
     secret = "fWWjJwh89NFaMDPrFdhu68Umus4vftlIzcNuXvwV"
     endpoint = "http://obs.cn-north-5.myhuaweicloud.com"
 
-    # just_read_obs("s3://modelarts-carbon/imageNet_resize/carbon/", key, secret, endpoint)
-    just_read_batch_obs("s3://modelarts-carbon/imageNet_resize/carbon/", key, secret, endpoint)
+    # just_read_obs("s3a://modelarts-carbon/imageNet_resize/carbon/", key, secret, endpoint)
+    just_read_batch_obs("s3a://modelarts-carbon/imageNet_resize/carbon/", key, secret, endpoint)
 
     end = time.time()
     print("all time: " + str(end - start))
