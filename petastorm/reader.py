@@ -27,6 +27,7 @@ from petastorm.etl.dataset_metadata import PetastormMetadataError, infer_or_load
 from petastorm.fs_utils import FilesystemResolver
 from petastorm.local_disk_arrow_table_cache import LocalDiskArrowTableCache
 from petastorm.local_disk_cache import LocalDiskCache
+from petastorm.local_memory_cache import LocalMemoryCache
 from petastorm.ngram import NGram
 from petastorm.predicates import PredicateBase
 from petastorm.py_dict_reader_worker import PyDictReaderWorker, PyDictCarbonReaderWorker
@@ -520,6 +521,8 @@ def make_batch_reader(dataset_url,
     elif cache_type == 'local-disk':
         cache = LocalDiskArrowTableCache(cache_location, cache_size_limit, cache_row_size_estimate,
                                          **cache_extra_settings or {})
+    elif cache_type == 'memory-cache':
+        cache = LocalMemoryCache(cache_size_limit)
     else:
         raise ValueError('Unknown cache_type: {}'.format(cache_type))
 
@@ -641,6 +644,8 @@ def make_batch_carbon_reader(dataset_url,
     elif cache_type == 'local-disk':
         cache = LocalDiskArrowTableCache(cache_location, cache_size_limit, cache_row_size_estimate,
                                          **cache_extra_settings or {})
+    elif cache_type == 'memory-cache':
+        cache = LocalMemoryCache(cache_size_limit)
     else:
         raise ValueError('Unknown cache_type: {}'.format(cache_type))
 
