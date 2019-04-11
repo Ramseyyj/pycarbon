@@ -947,7 +947,7 @@ class Reader(object):
 
     def __next__(self):
         try:
-            return self._results_queue_reader.read_next(self._workers_pool, self.schema, self.ngram)
+            return self._results_queue_reader.read_next(self._workers_pool, self.schema, self.ngram, to_pandas_ahead=self.to_pandas_ahead)
         except StopIteration:
             self.last_row_consumed = True
             raise
