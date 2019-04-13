@@ -30,9 +30,15 @@ from petastorm import make_carbon_reader, make_batch_carbon_reader
 def just_read(dataset_url):
     with make_carbon_reader(dataset_url, num_epochs=1, workers_count=1) as train_reader:
         i = 0
+        start = time.time()
         for schema_view in train_reader:
             # print(schema_view.imagename)
-            i = i + 1
+            schema_view.imagebinary
+            i += 1
+            if i % 1281167 == 0:
+                end = time.time()
+                print("time is " + str(end - start))
+                start = end
         print(i)
 
 def just_read_batch(dataset_url):

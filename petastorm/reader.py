@@ -138,6 +138,8 @@ def make_reader(dataset_url,
         cache = NullCache()
     elif cache_type == 'local-disk':
         cache = LocalDiskCache(cache_location, cache_size_limit, cache_row_size_estimate, **cache_extra_settings or {})
+    elif cache_type == 'memory-cache':
+        cache = LocalMemoryCache(cache_size_limit)
     else:
         raise ValueError('Unknown cache_type: {}'.format(cache_type))
 
@@ -335,6 +337,8 @@ def make_carbon_reader(dataset_url,
         cache = NullCache()
     elif cache_type == 'local-disk':
         cache = LocalDiskCache(cache_location, cache_size_limit, cache_row_size_estimate, **cache_extra_settings or {})
+    elif cache_type == 'memory-cache':
+        cache = LocalMemoryCache(cache_size_limit)
     else:
         raise ValueError('Unknown cache_type: {}'.format(cache_type))
 
