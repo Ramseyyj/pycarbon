@@ -31,8 +31,16 @@ import jnius_config
 
 jnius_config.set_classpath(pytest.config.getoption("--carbon-sdk-path"))
 
-os.environ['PYSPARK_PYTHON'] = pytest.config.getoption("--pyspark-python")
-os.environ['PYSPARK_DRIVER_PYTHON'] = pytest.config.getoption("--pyspark-driver-python")
+if 'PYSPARK_PYTHON' in os.environ.keys() and 'PYSPARK_DRIVER_PYTHON' in os.environ.keys():
+  pass
+elif pytest.config.getoption("--pyspark-python") is not None and \
+    pytest.config.getoption("--pyspark-driver-python") is not None:
+  os.environ['PYSPARK_PYTHON'] = pytest.config.getoption("--pyspark-python")
+  os.environ['PYSPARK_DRIVER_PYTHON'] = pytest.config.getoption("--pyspark-driver-python")
+else:
+  raise ValueError("please set PYSPARK_PYTHON and PYSPARK_DRIVER_PYTHON variables, "
+                   "using cmd line --pyspark-python=PYSPARK_PYTHON_PATH --pyspark-driver-python=PYSPARK_DRIVER_PYTHON_PATH, "
+                   "or set PYSPARK_PYTHON and PYSPARK_DRIVER_PYTHON in system env")
 
 logging.basicConfig(level=logging.INFO)
 

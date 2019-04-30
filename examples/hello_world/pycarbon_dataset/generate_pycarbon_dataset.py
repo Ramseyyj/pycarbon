@@ -70,17 +70,24 @@ def generate_pycarbon_dataset(output_url='file:///tmp/carbon_pycarbon_dataset'):
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser(description='Pycarbon Example II')
-  parser.add_argument('-pp', '--pyspark-python', type=str, required=True,
+  parser.add_argument('-pp', '--pyspark-python', type=str, default=None,
                       help='pyspark python env variable')
-  parser.add_argument('-pdp', '--pyspark-driver-python', type=str, required=True,
+  parser.add_argument('-pdp', '--pyspark-driver-python', type=str, default=None,
                       help='pyspark driver python env variable')
   parser.add_argument('-c', '--carbon-sdk-path', type=str, default=DEFAULT_CARBONSDK_PATH,
                       help='carbon sdk path')
 
   args = parser.parse_args()
-
-  os.environ['PYSPARK_PYTHON'] = args.pyspark_python
-  os.environ['PYSPARK_DRIVER_PYTHON'] = args.pyspark_driver_python
   jnius_config.set_classpath(args.carbon_sdk_path)
 
-  generate_pycarbon_dataset()
+  if 'PYSPARK_PYTHON' in os.environ.keys() and 'PYSPARK_DRIVER_PYTHON' in os.environ.keys():
+    generate_pycarbon_dataset()
+  elif args.pyspark_python is not None and args.pyspark_driver_python is not None:
+    os.environ['PYSPARK_PYTHON'] = args.pyspark_python
+    os.environ['PYSPARK_DRIVER_PYTHON'] = args.pyspark_driver_python
+    generate_pycarbon_dataset()
+  else:
+    raise ValueError("please set PYSPARK_PYTHON and PYSPARK_DRIVER_PYTHON variables, "
+                     "using cmd line -pp PYSPARK_PYTHON_PATH -pdp PYSPARK_DRIVER_PYTHON_PATH, "
+                     "set PYSPARK_PYTHON and PYSPARK_DRIVER_PYTHON in system env")
+

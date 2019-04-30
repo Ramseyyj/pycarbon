@@ -54,9 +54,9 @@ def _arg_parser():
                       help='hdfs://... or file:/// url where the carbon dataset will be written to.')
   parser.add_argument('-m', '--master', type=str, required=False, default='local[*]',
                       help='Spark master; default is local[*] to run locally.')
-  parser.add_argument('-pp', '--pyspark-python', type=str, required=True,
+  parser.add_argument('-pp', '--pyspark-python', type=str, default=None,
                       help='pyspark python env variable')
-  parser.add_argument('-pdp', '--pyspark-driver-python', type=str, required=True,
+  parser.add_argument('-pdp', '--pyspark-driver-python', type=str, default=None,
                       help='pyspark driver python env variable')
   parser.add_argument('-c', '--carbon-sdk-path', type=str, default=DEFAULT_CARBONSDK_PATH,
                       help='carbon sdk path')
@@ -147,11 +147,19 @@ if __name__ == '__main__':
   else:
     download_dir = args.download_dir
 
-  os.environ['PYSPARK_PYTHON'] = args.pyspark_python
-  os.environ['PYSPARK_DRIVER_PYTHON'] = args.pyspark_driver_python
   jnius_config.set_classpath(args.carbon_sdk_path)
 
-  mnist_data_to_pycarbon_dataset(download_dir, args.output_url)
+  if 'PYSPARK_PYTHON' in os.environ.keys() and 'PYSPARK_DRIVER_PYTHON' in os.environ.keys():
+    mnist_data_to_pycarbon_dataset(download_dir, args.output_url)
+  elif args.pyspark_python is not None and args.pyspark_driver_python is not None:
+    os.environ['PYSPARK_PYTHON'] = args.pyspark_python
+    os.environ['PYSPARK_DRIVER_PYTHON'] = args.pyspark_driver_python
+    mnist_data_to_pycarbon_dataset(download_dir, args.output_url)
+  else:
+    raise ValueError("please set PYSPARK_PYTHON and PYSPARK_DRIVER_PYTHON variables, "
+                     "using cmd line -pp PYSPARK_PYTHON_PATH -pdp PYSPARK_DRIVER_PYTHON_PATH, "
+                     "set PYSPARK_PYTHON and PYSPARK_DRIVER_PYTHON in system env")
+
   if args.download_dir is None:
     if os.path.exists(download_dir):
       shutil.rmtree(download_dir)

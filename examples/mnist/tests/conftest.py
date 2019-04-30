@@ -13,9 +13,9 @@ LARGE_MOCK_IMAGE_COUNT = {
 }
 
 def pytest_addoption(parser):
-  parser.addoption('--pyspark-python', type=str, required=True,
+  parser.addoption('--pyspark-python', type=str, default=None,
                    help='pyspark python env variable')
-  parser.addoption('--pyspark-driver-python', type=str, required=True,
+  parser.addoption('--pyspark-driver-python', type=str, default=None,
                    help='pyspark driver python env variable')
   parser.addoption('--carbon-sdk-path', type=str, default='../../../jars/carbondata-sdk.jar',
                    help='carbon sdk path')

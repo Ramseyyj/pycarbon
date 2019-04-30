@@ -55,14 +55,20 @@ def generate_external_dataset(output_url='file:///tmp/carbon_external_dataset'):
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser(description='Pycarbon Hello World Example I')
-  parser.add_argument('-pp', '--pyspark-python', type=str, required=True,
+  parser.add_argument('-pp', '--pyspark-python', type=str, default=None,
                       help='pyspark python env variable')
-  parser.add_argument('-pdp', '--pyspark-driver-python', type=str, required=True,
+  parser.add_argument('-pdp', '--pyspark-driver-python', type=str, default=None,
                       help='pyspark driver python env variable')
 
   args = parser.parse_args()
 
-  os.environ['PYSPARK_PYTHON'] = args.pyspark_python
-  os.environ['PYSPARK_DRIVER_PYTHON'] = args.pyspark_driver_python
-
-  generate_external_dataset()
+  if 'PYSPARK_PYTHON' in os.environ.keys() and 'PYSPARK_DRIVER_PYTHON' in os.environ.keys():
+    generate_external_dataset()
+  elif args.pyspark_python is not None and args.pyspark_driver_python is not None:
+    os.environ['PYSPARK_PYTHON'] = args.pyspark_python
+    os.environ['PYSPARK_DRIVER_PYTHON'] = args.pyspark_driver_python
+    generate_external_dataset()
+  else:
+    raise ValueError("please set PYSPARK_PYTHON and PYSPARK_DRIVER_PYTHON variables, "
+                     "using cmd line -pp PYSPARK_PYTHON_PATH -pdp PYSPARK_DRIVER_PYTHON_PATH, "
+                     "set PYSPARK_PYTHON and PYSPARK_DRIVER_PYTHON in system env")

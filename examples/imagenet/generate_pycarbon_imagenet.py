@@ -53,9 +53,9 @@ def _arg_parser():
                       help='hdfs://... or file:/// url where the carbon dataset will be written to.')
   parser.add_argument('-m', '--master', type=str, required=False, default=None,
                       help='Spark master. Use --master=local[*] to run locally.')
-  parser.add_argument('-pp', '--pyspark-python', type=str, required=True,
+  parser.add_argument('-pp', '--pyspark-python', type=str, default=None,
                       help='pyspark python env variable')
-  parser.add_argument('-pdp', '--pyspark-driver-python', type=str, required=True,
+  parser.add_argument('-pdp', '--pyspark-driver-python', type=str, default=None,
                       help='pyspark driver python env variable')
   parser.add_argument('-c', '--carbon-sdk-path', type=str, default=DEFAULT_CARBONSDK_PATH,
                       help='carbon sdk path')
@@ -150,9 +150,16 @@ def imagenet_directory_to_pycarbon_dataset(imagenet_path, output_url, spark_mast
 
 if __name__ == '__main__':
   args = _arg_parser().parse_args()
-
-  os.environ['PYSPARK_PYTHON'] = args.pyspark_python
-  os.environ['PYSPARK_DRIVER_PYTHON'] = args.pyspark_driver_python
   jnius_config.set_classpath(args.carbon_sdk_path)
 
-  imagenet_directory_to_pycarbon_dataset(args.input_path, args.output_url)
+  if 'PYSPARK_PYTHON' in os.environ.keys() and 'PYSPARK_DRIVER_PYTHON' in os.environ.keys():
+    imagenet_directory_to_pycarbon_dataset(args.input_path, args.output_url)
+  elif args.pyspark_python is not None and args.pyspark_driver_python is not None:
+    os.environ['PYSPARK_PYTHON'] = args.pyspark_python
+    os.environ['PYSPARK_DRIVER_PYTHON'] = args.pyspark_driver_python
+    imagenet_directory_to_pycarbon_dataset(args.input_path, args.output_url)
+  else:
+    raise ValueError("please set PYSPARK_PYTHON and PYSPARK_DRIVER_PYTHON variables, "
+                     "using cmd line -pp PYSPARK_PYTHON_PATH -pdp PYSPARK_DRIVER_PYTHON_PATH, "
+                     "set PYSPARK_PYTHON and PYSPARK_DRIVER_PYTHON in system env")
+
