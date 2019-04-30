@@ -12,7 +12,9 @@ $ pip install . --user
 
 ## how to use
 
-if you have a CarbonData dataset, you can use pycarbon to read data
+if you have a CarbonData dataset, you can use pycarbon to read data. For the generation of CarbonData dataset, you can see the examples:
+`generate_external_dataset_carbon.py <https://github.com/HuaweiBigData/pycarbon/blob/master/examples/hello_world/external_dataset/generate_external_dataset_carbon.py>` and 
+`generate_pycarbon_dataset.py <https://github.com/HuaweiBigData/pycarbon/blob/master/examples/hello_world/pycarbon_dataset/generate_pycarbon_dataset.py>`
 
 #### PySpark and SQL
     # Create a dataframe object from carbon files
