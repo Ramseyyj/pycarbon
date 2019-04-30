@@ -25,7 +25,7 @@ from petastorm.tf_utils import tf_tensors, make_petastorm_dataset
 
 from pycarbon.carbon_reader import make_carbon_reader
 
-from examples.hello_world.pycarbon_dataset import DEFAULT_CARBONSDK_PATH
+from examples import DEFAULT_CARBONSDK_PATH
 
 
 def tensorflow_hello_world(dataset_url='file:///tmp/carbon_pycarbon_dataset/'):

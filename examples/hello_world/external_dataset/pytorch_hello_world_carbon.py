@@ -24,7 +24,7 @@ from petastorm.pytorch import DataLoader
 
 from pycarbon.carbon_reader import make_batch_carbon_reader
 
-from examples.hello_world.external_dataset import DEFAULT_CARBONSDK_PATH
+from examples import DEFAULT_CARBONSDK_PATH
 
 
 def pytorch_hello_world(dataset_url='file:///tmp/carbon_external_dataset'):

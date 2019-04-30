@@ -1,4 +1,4 @@
-import pytest
+from examples import DEFAULT_CARBONSDK_PATH
 
 
 def pytest_addoption(parser):
@@ -6,5 +6,5 @@ def pytest_addoption(parser):
                    help='pyspark python env variable')
   parser.addoption('--pyspark-driver-python', type=str, default=None,
                    help='pyspark driver python env variable')
-  parser.addoption('--carbon-sdk-path', type=str, default='../../../../jars/carbondata-sdk.jar',
+  parser.addoption('--carbon-sdk-path', type=str, default=DEFAULT_CARBONSDK_PATH,
                    help='carbon sdk path')

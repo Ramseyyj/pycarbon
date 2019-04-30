@@ -1,6 +1,3 @@
-import pytest
-
-
 def pytest_addoption(parser):
   parser.addoption('--pyspark-python', type=str, default=None,
                    help='pyspark python env variable')

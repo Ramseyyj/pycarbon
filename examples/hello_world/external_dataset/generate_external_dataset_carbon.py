@@ -63,12 +63,13 @@ if __name__ == '__main__':
   args = parser.parse_args()
 
   if 'PYSPARK_PYTHON' in os.environ.keys() and 'PYSPARK_DRIVER_PYTHON' in os.environ.keys():
-    generate_external_dataset()
+    pass
   elif args.pyspark_python is not None and args.pyspark_driver_python is not None:
     os.environ['PYSPARK_PYTHON'] = args.pyspark_python
     os.environ['PYSPARK_DRIVER_PYTHON'] = args.pyspark_driver_python
-    generate_external_dataset()
   else:
     raise ValueError("please set PYSPARK_PYTHON and PYSPARK_DRIVER_PYTHON variables, "
                      "using cmd line -pp PYSPARK_PYTHON_PATH -pdp PYSPARK_DRIVER_PYTHON_PATH, "
                      "set PYSPARK_PYTHON and PYSPARK_DRIVER_PYTHON in system env")
+
+  generate_external_dataset()

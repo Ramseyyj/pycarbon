@@ -36,7 +36,7 @@ from pyspark.sql import SparkSession
 from six.moves.urllib.request import urlopen  # pylint: disable=import-error
 
 from examples.imagenet.schema import ImagenetSchema
-from examples.imagenet import DEFAULT_CARBONSDK_PATH
+from examples import DEFAULT_CARBONSDK_PATH
 from petastorm.unischema import dict_to_spark_row
 
 from pycarbon.etl.carbon_dataset_metadata import materialize_dataset_carbon
@@ -153,13 +153,14 @@ if __name__ == '__main__':
   jnius_config.set_classpath(args.carbon_sdk_path)
 
   if 'PYSPARK_PYTHON' in os.environ.keys() and 'PYSPARK_DRIVER_PYTHON' in os.environ.keys():
-    imagenet_directory_to_pycarbon_dataset(args.input_path, args.output_url)
+    pass
   elif args.pyspark_python is not None and args.pyspark_driver_python is not None:
     os.environ['PYSPARK_PYTHON'] = args.pyspark_python
     os.environ['PYSPARK_DRIVER_PYTHON'] = args.pyspark_driver_python
-    imagenet_directory_to_pycarbon_dataset(args.input_path, args.output_url)
   else:
     raise ValueError("please set PYSPARK_PYTHON and PYSPARK_DRIVER_PYTHON variables, "
                      "using cmd line -pp PYSPARK_PYTHON_PATH -pdp PYSPARK_DRIVER_PYTHON_PATH, "
                      "set PYSPARK_PYTHON and PYSPARK_DRIVER_PYTHON in system env")
+
+  imagenet_directory_to_pycarbon_dataset(args.input_path, args.output_url)
 

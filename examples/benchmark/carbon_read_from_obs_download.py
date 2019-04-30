@@ -29,7 +29,7 @@ import jnius_config
 from obs import ObsClient
 from pycarbon.carbon_reader import make_batch_carbon_reader
 
-from examples.benchmark import DEFAULT_CARBONSDK_PATH
+from examples import DEFAULT_CARBONSDK_PATH
 
 
 def just_read_batch_obs(key, secret, endpoint, bucketname, prefix, download_path):

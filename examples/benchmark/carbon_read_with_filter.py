@@ -28,7 +28,7 @@ import jnius_config
 from petastorm.predicates import in_set
 from pycarbon.carbon_reader import make_carbon_reader, make_batch_carbon_reader
 
-from examples.benchmark import DEFAULT_CARBONSDK_PATH
+from examples import DEFAULT_CARBONSDK_PATH
 
 
 def just_read(dataset_url):
