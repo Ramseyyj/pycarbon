@@ -29,7 +29,7 @@ import tensorflow as tf
 
 from examples.mnist import DEFAULT_MNIST_DATA_PATH
 from examples import DEFAULT_CARBONSDK_PATH
-from petastorm.tf_utils import tf_tensors
+from pycarbon.carbon_tf_utils import tf_tensors
 
 from pycarbon.carbon_reader import make_carbon_reader
 

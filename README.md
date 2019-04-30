@@ -35,7 +35,7 @@ some details are illustrated in `pyspark_hello_world_carbon.py <https://github.c
 
 #### Tensorflow Dataset API
     with make_carbon_reader('file:///some/localpath/a_dataset') as reader:
-        dataset = make_petastorm_dataset(reader)
+        dataset = make_pycarbon_dataset(reader)
         iterator = dataset.make_one_shot_iterator()
         tensor = iterator.get_next()
         with tf.Session() as sess:

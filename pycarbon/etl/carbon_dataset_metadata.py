@@ -22,7 +22,6 @@ from six.moves.urllib.parse import urlparse
 from petastorm.etl.legacy import depickle_legacy_package_name_compatible
 from petastorm.fs_utils import FilesystemResolver
 from petastorm.unischema import Unischema
-from petastorm.etl.dataset_metadata import PetastormMetadataError
 from petastorm.unischema import _numpy_and_codec_from_arrow_type
 from petastorm.unischema import UnischemaField
 from petastorm.etl.dataset_metadata import _init_spark, _cleanup_spark
@@ -34,6 +33,13 @@ logger = logging.getLogger(__name__)
 
 BLOCKLETS_PER_FILE_KEY = b'dataset-toolkit.num_blocklets_per_file.v1'
 UNISCHEMA_KEY = b'dataset-toolkit.unischema.v1'
+
+
+class PycarbonMetadataError(Exception):
+    """
+        Error to specify when the pycarbon metadata does not exist, does not contain the necessary information,
+            or is corrupt/invalid.
+                """
 
 @contextmanager
 def materialize_dataset_carbon(spark, dataset_url, schema, blocklet_size_mb=None, use_summary_metadata=False,
@@ -106,7 +112,7 @@ def _generate_unischema_metadata_carbon(carbon_schema, schema):
   :param schema:  (Unischema) Schema to attach to dataset
   :return: None
   """
-  # TODO(robbieg): Simply pickling unischema will break if the UnischemaField class is changed,
+  # TODO: Simply pickling unischema will break if the UnischemaField class is changed,
   #  or the codec classes are changed. We likely need something more robust.
   serialized_schema = pickle.dumps(schema)
   carbon_utils.add_to_dataset_metadata_carbon(carbon_schema, UNISCHEMA_KEY, serialized_schema)
@@ -150,21 +156,23 @@ def get_schema_carbon(carbon_dataset):
   :return: A :class:`petastorm.unischema.Unischema` object
   """
   if not carbon_dataset.common_metadata:
-    raise PetastormMetadataError(
+    raise PycarbonMetadataError(
       'Could not find _common_metadata file. Use materialize_dataset(..) in'
       ' pycarbon.etl.carbon_dataset_metadata.py to generate this file in your ETL code.'
-      ' You can generate it on an existing dataset using petastorm-generate-metadata.py')
+      ' You can generate it on an existing dataset using pycarbon-generate-metadata.py')
+  # TODO add pycarbon-generate-metadata.py
+
   dataset_metadata_dict = carbon_dataset.common_metadata.metadata
 
   # Read schema
   if UNISCHEMA_KEY not in dataset_metadata_dict:
-    raise PetastormMetadataError(
+    raise PycarbonMetadataError(
       'Could not find the unischema in the dataset common metadata file.'
       ' Please provide or generate dataset with the unischema attached.'
       ' Common Metadata file might not be generated properly.'
       ' Make sure to use materialize_dataset(..) in pycarbon.etl.carbon_dataset_metadata to'
       ' properly generate this file in your ETL code.'
-      ' You can generate it on an existing dataset using petastorm-generate-metadata.py')
+      ' You can generate it on an existing dataset using pycarbon-generate-metadata.py')
   ser_schema = dataset_metadata_dict[UNISCHEMA_KEY]
   # Since we have moved the unischema class around few times, unpickling old schemas will not work. In this case we
   # override the old import path to get backwards compatibility
@@ -179,7 +187,7 @@ def infer_or_load_unischema_carbon(carbon_dataset):
       Unischema from native Carbon schema"""
   try:
     return get_schema_carbon(carbon_dataset)
-  except PetastormMetadataError:
+  except PycarbonMetadataError:
     logger.info('Failed loading Unischema from metadata in %s. Assuming the dataset was not created with '
                 'Pycarbon. Will try to construct from native Carbon schema.')
 

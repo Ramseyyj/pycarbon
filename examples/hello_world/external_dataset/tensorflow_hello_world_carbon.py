@@ -22,7 +22,7 @@ import jnius_config
 
 import tensorflow as tf
 
-from petastorm.tf_utils import tf_tensors, make_petastorm_dataset
+from pycarbon.carbon_tf_utils import tf_tensors, make_pycarbon_dataset
 
 from pycarbon.carbon_reader import make_batch_carbon_reader
 
@@ -40,7 +40,7 @@ def tensorflow_hello_world(dataset_url='file:///tmp/carbon_external_dataset'):
 
   # Example: use tf.data.Dataset API
   with make_batch_carbon_reader(dataset_url) as reader:
-    dataset = make_petastorm_dataset(reader)
+    dataset = make_pycarbon_dataset(reader)
     iterator = dataset.make_one_shot_iterator()
     tensor = iterator.get_next()
     with tf.Session() as sess:

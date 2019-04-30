@@ -18,7 +18,6 @@ import logging
 import six
 
 from petastorm.cache import NullCache
-from petastorm.etl.dataset_metadata import PetastormMetadataError
 from petastorm.local_disk_arrow_table_cache import LocalDiskArrowTableCache
 from petastorm.local_disk_cache import LocalDiskCache
 from petastorm.ngram import NGram
@@ -35,6 +34,7 @@ from pycarbon.carbon_arrow_reader_worker import ArrowCarbonReaderWorker
 from pycarbon.carbon_py_dict_reader_worker import PyDictCarbonReaderWorker
 from pycarbon.carbon import CarbonDataset
 from pycarbon.etl.carbon_dataset_metadata import infer_or_load_unischema_carbon
+from pycarbon.etl.carbon_dataset_metadata import PycarbonMetadataError
 from pycarbon.carbon_local_memory_cache import LocalMemoryCache
 from pycarbon.carbon_fs_utils import CarbonFilesystemResolver
 
@@ -164,7 +164,7 @@ def make_carbon_reader(dataset_url,
                                                  proxy=proxy,
                                                  proxy_port=proxy_port,
                                                  filesystem=filesystem))
-  except PetastormMetadataError:
+  except PycarbonMetadataError:
     raise RuntimeError('Currently make_reader supports reading only Pycarbon datasets. '
                        'To read from a non-Pycarbon Carbon store use make_batch_reader')
 
@@ -209,7 +209,7 @@ def make_carbon_reader(dataset_url,
       return CarbonDataReader(filesystem, dataset_url,
                               worker_class=PyDictCarbonReaderWorker,
                               **kwargs)
-    except PetastormMetadataError as e:
+    except PycarbonMetadataError as e:
       logger.error('Unexpected exception: %s', str(e))
       raise RuntimeError('make_carbon_reader has failed. If you were trying to open a Carbon store that was not '
                          'created using Pycarbon materialize_dataset_carbon and it contains only scalar columns, '
