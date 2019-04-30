@@ -3,7 +3,7 @@
 .pytest_cache
 
 # Repository build artifacts
-petastorm.egg-info
+pycarbon.egg-info
 build
 dist
 

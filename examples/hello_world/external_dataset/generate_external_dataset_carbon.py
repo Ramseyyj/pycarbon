@@ -1,4 +1,4 @@
-#  Copyright (c) 2018-2019 Uber Technologies, Inc.
+#  Copyright (c) 2018-2019 Huawei Technologies, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,42 +13,56 @@
 # limitations under the License.
 
 """
-This is part of a minimal example of how to use petastorm to read a dataset not created
-with petastorm. Generates a sample dataset from random data.
+This is part of a minimal example of how to use pycarbon to read a dataset not created
+with pycarbon. Generates a sample dataset from random data.
 """
 
+import os
+import argparse
 import random
 from pyspark.sql import SparkSession, Row
 from pyspark.sql.types import StructType, StructField, IntegerType
 
-
-NON_PETASTORM_SCHEMA = StructType([
-    StructField("id", IntegerType(), True),
-    StructField("value1", IntegerType(), True),
-    StructField("value2", IntegerType(), True)
+NON_PYCARBON_SCHEMA = StructType([
+  StructField("id", IntegerType(), True),
+  StructField("value1", IntegerType(), True),
+  StructField("value2", IntegerType(), True)
 ])
 
 
 def row_generator(x):
-    """Returns a single entry in the generated dataset. Return a bunch of random values as an example."""
-    return Row(id=x, value1=random.randint(-255, 255), value2=random.randint(-255, 255))
+  """Returns a single entry in the generated dataset. Return a bunch of random values as an example."""
+  return Row(id=x, value1=random.randint(-255, 255), value2=random.randint(-255, 255))
 
 
-def generate_external_dataset(output_url='file:///tmp/carbon_dataset'):
-    # """Creates an example dataset at output_url in Parquet format"""
-    spark = SparkSession.builder\
-        .master('local')\
-        .getOrCreate()
-    sc = spark.sparkContext
-    sc.setLogLevel('INFO')
+def generate_external_dataset(output_url='file:///tmp/carbon_external_dataset'):
+  # """Creates an example dataset at output_url in Carbon format"""
+  spark = SparkSession.builder \
+    .master('local') \
+    .getOrCreate()
+  sc = spark.sparkContext
+  sc.setLogLevel('INFO')
 
-    rows_count = 10
-    rows_rdd = sc.parallelize(range(rows_count))\
-        .map(row_generator)
-    #
-    spark.createDataFrame(rows_rdd).\
-        write.\
-        save(path=output_url,format='carbon')
+  rows_count = 10
+  rows_rdd = sc.parallelize(range(rows_count)) \
+    .map(row_generator)
+  #
+  spark.createDataFrame(rows_rdd) \
+    .write \
+    .mode('overwrite') \
+    .save(path=output_url, format='carbon')
+
 
 if __name__ == '__main__':
-    generate_external_dataset()
+  parser = argparse.ArgumentParser(description='Pycarbon Hello World Example I')
+  parser.add_argument('-pp', '--pyspark-python', type=str, required=True,
+                      help='pyspark python env variable')
+  parser.add_argument('-pdp', '--pyspark-driver-python', type=str, required=True,
+                      help='pyspark driver python env variable')
+
+  args = parser.parse_args()
+
+  os.environ['PYSPARK_PYTHON'] = args.pyspark_python
+  os.environ['PYSPARK_DRIVER_PYTHON'] = args.pyspark_driver_python
+
+  generate_external_dataset()
