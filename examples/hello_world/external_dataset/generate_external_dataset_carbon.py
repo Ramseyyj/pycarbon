@@ -70,6 +70,6 @@ if __name__ == '__main__':
   else:
     raise ValueError("please set PYSPARK_PYTHON and PYSPARK_DRIVER_PYTHON variables, "
                      "using cmd line -pp PYSPARK_PYTHON_PATH -pdp PYSPARK_DRIVER_PYTHON_PATH, "
-                     "set PYSPARK_PYTHON and PYSPARK_DRIVER_PYTHON in system env")
+                     "or set PYSPARK_PYTHON and PYSPARK_DRIVER_PYTHON in system env")
 
   generate_external_dataset()
