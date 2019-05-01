@@ -80,11 +80,11 @@ if __name__ == '__main__':
   args = parser.parse_args()
   jnius_config.set_classpath(args.carbon_sdk_path)
 
-  if 'PYSPARK_PYTHON' in os.environ.keys() and 'PYSPARK_DRIVER_PYTHON' in os.environ.keys():
-    pass
-  elif args.pyspark_python is not None and args.pyspark_driver_python is not None:
+  if args.pyspark_python is not None and args.pyspark_driver_python is not None:
     os.environ['PYSPARK_PYTHON'] = args.pyspark_python
     os.environ['PYSPARK_DRIVER_PYTHON'] = args.pyspark_driver_python
+  elif 'PYSPARK_PYTHON' in os.environ.keys() and 'PYSPARK_DRIVER_PYTHON' in os.environ.keys():
+    pass
   else:
     raise ValueError("please set PYSPARK_PYTHON and PYSPARK_DRIVER_PYTHON variables, "
                      "using cmd line -pp PYSPARK_PYTHON_PATH -pdp PYSPARK_DRIVER_PYTHON_PATH, "
