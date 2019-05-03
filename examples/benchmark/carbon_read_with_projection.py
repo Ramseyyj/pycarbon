@@ -19,7 +19,6 @@
 
 from __future__ import division, print_function
 
-import os
 import time
 
 import argparse
@@ -30,27 +29,25 @@ from pycarbon.carbon_reader import make_carbon_reader, make_batch_carbon_reader
 from examples import DEFAULT_CARBONSDK_PATH
 
 
-def just_read(dataset_url):
+def just_read(dataset_url='file:///tmp/benchmark_dataset'):
   with make_carbon_reader(dataset_url, num_epochs=1, workers_count=16,
-                          schema_fields=["imagename", "imageid"]) as train_reader:
+                          schema_fields=["id", "value1"]) as train_reader:
     i = 0
     for schema_view in train_reader:
-      # print(schema_view.imagename)
       assert len(schema_view) == 2
-      assert schema_view._fields == ('imageid', 'imagename')
-      i = i + 1
+      assert schema_view._fields == ('id', 'value1')
+      i += 1
     print(i)
 
 
-def just_read_batch(dataset_url):
+def just_read_batch(dataset_url='file:///tmp/benchmark_dataset'):
   with make_batch_carbon_reader(dataset_url, num_epochs=1, workers_count=16,
-                                schema_fields=["imagename", "imageid"]) as train_reader:
+                                schema_fields=["id", "value1"]) as train_reader:
     i = 0
     for schema_view in train_reader:
-      # print(schema_view.imagename)
       assert len(schema_view) == 2
-      assert schema_view._fields == ('imageid', 'imagename')
-      i += len(schema_view.imagename)
+      assert schema_view._fields == ('id', 'value1')
+      i += len(schema_view.id)
     print(i)
 
 
@@ -68,12 +65,9 @@ def main():
   print("Start")
   start = time.time()
 
-  datapath = os.getcwd()
-  dataset_url = "file://" + datapath + "/data/tinyvoc"
+  just_read()
 
-  just_read(dataset_url)
-
-  just_read_batch(dataset_url)
+  just_read_batch()
 
   end = time.time()
   print("all time: " + str(end - start))

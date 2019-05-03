@@ -33,7 +33,7 @@ def just_read_obs(dataset_url, key, secret, endpoint):
                           workers_count=16) as train_reader:
     i = 0
     for schema_view in train_reader:
-      i = i + 1
+      i += 1
     print(i)
 
 
@@ -64,9 +64,9 @@ def main():
   secret = "fWWjJwh89NFaMDPrFdhu68Umus4vftlIzcNuXvwV"
   endpoint = "http://obs.cn-north-5.myhuaweicloud.com"
 
-  just_read_obs("s3a://modelarts-carbon/imageNet_resize/carbon/", key, secret, endpoint)
+  just_read_obs("s3a://modelarts-carbon/imageNet_resize/imageNet_whole_resize_small1/", key, secret, endpoint)
 
-  just_read_batch_obs("s3a://modelarts-carbon/imageNet_resize/carbon/", key, secret, endpoint)
+  just_read_batch_obs("s3a://modelarts-carbon/imageNet_resize/imageNet_whole_resize_small1/", key, secret, endpoint)
 
   end = time.time()
   print("all time: " + str(end - start))

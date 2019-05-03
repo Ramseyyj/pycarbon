@@ -19,7 +19,6 @@
 
 from __future__ import division, print_function
 
-import os
 import time
 import argparse
 
@@ -28,31 +27,32 @@ import jnius_config
 from pycarbon.carbon_reader import make_carbon_reader, make_batch_carbon_reader
 
 from examples import DEFAULT_CARBONSDK_PATH
+from examples.benchmark.generate_benchmark_dataset_carbon import ROW_COUNT
 
 
-def just_read(dataset_url):
+def just_read(dataset_url='file:///tmp/benchmark_dataset'):
   with make_carbon_reader(dataset_url, num_epochs=1) as train_reader:
     i = 0
     start = time.time()
     for schema_view in train_reader:
-      schema_view.imagebinary
+      schema_view.id
       i += 1
-      if i % 152 == 0:
+      if i % ROW_COUNT == 0:
         end = time.time()
         print("time is " + str(end - start))
         start = end
     print(i)
 
 
-def just_read_batch(dataset_url):
+def just_read_batch(dataset_url='file:///tmp/benchmark_dataset'):
   with make_batch_carbon_reader(dataset_url, num_epochs=1) as train_reader:
     i = 0
     start = time.time()
     for schema_view in train_reader:
-      for j in range(len(schema_view.imagename)):
-        schema_view.imagebinary[j]
+      for j in range(len(schema_view.id)):
+        schema_view.id[j]
         i += 1
-        if i % 152 == 0:
+        if i % ROW_COUNT == 0:
           end = time.time()
           print("time is " + str(end - start))
           start = end
@@ -74,12 +74,9 @@ def main():
   print("Start")
   start = time.time()
 
-  datapath = os.getcwd()
-  dataset_url = "file://" + datapath + "/data/tinyvoc"
+  just_read()
 
-  just_read(dataset_url)
-
-  just_read_batch(dataset_url)
+  just_read_batch()
 
   end = time.time()
   print("all time: " + str(end - start))

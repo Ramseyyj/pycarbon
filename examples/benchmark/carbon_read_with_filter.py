@@ -19,7 +19,6 @@
 
 from __future__ import division, print_function
 
-import os
 import time
 
 import argparse
@@ -31,29 +30,29 @@ from pycarbon.carbon_reader import make_carbon_reader, make_batch_carbon_reader
 from examples import DEFAULT_CARBONSDK_PATH
 
 
-def just_read(dataset_url):
+def just_read(dataset_url='file:///tmp/benchmark_dataset'):
   values = [5]
-  predicate = in_set(values, "imageid")
+  predicate = in_set(values, "id")
 
   with make_carbon_reader(dataset_url, num_epochs=1, workers_count=16,
                           predicate=predicate) as train_reader:
     i = 0
     for schema_view in train_reader:
-      assert schema_view.imageid == 5
-      i = i + 1
+      assert schema_view.id == 5
+      i += 1
     assert i == 1
     print(i)
 
 
-def just_read_batch(dataset_url):
+def just_read_batch(dataset_url='file:///tmp/benchmark_dataset'):
   values = [5]
-  predicate = in_set(values, "imageid")
+  predicate = in_set(values, "id")
   with make_batch_carbon_reader(dataset_url, num_epochs=1, workers_count=16,
                                 predicate=predicate) as train_reader:
     i = 0
     for schema_view in train_reader:
-      assert schema_view.imageid == 5
-      i += len(schema_view.imagename)
+      assert schema_view.id == 5
+      i += len(schema_view.id)
     print(i)
 
 
@@ -71,12 +70,9 @@ def main():
   print("Start")
   start = time.time()
 
-  datapath = os.getcwd()
-  dataset_url = "file://" + datapath + "/data/tinyvoc"
+  just_read()
 
-  just_read(dataset_url)
-
-  # just_read_batch(dataset_url)
+  # just_read_batch()
 
   end = time.time()
   print("all time: " + str(end - start))
