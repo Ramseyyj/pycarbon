@@ -1,13 +1,12 @@
-from examples.benchmark import carbon_read_from_local
-from examples.benchmark import generate_benchmark_dataset_carbon
-
 import os
+import time
+from examples.mnist.pycarbon_dataset import tf_example_carbon as tf_example
+from examples.mnist.pycarbon_dataset.generate_pycarbon_mnist import mnist_data_to_pycarbon_dataset
+
 import pytest
 import jnius_config
 
 jnius_config.set_classpath(pytest.config.getoption("--carbon-sdk-path"))
-
-jnius_config.add_options('-Xrs', '-Xmx6g')
 
 if pytest.config.getoption("--pyspark-python") is not None and \
     pytest.config.getoption("--pyspark-driver-python") is not None:
@@ -20,11 +19,19 @@ else:
                    "using cmd line --pyspark-python=PYSPARK_PYTHON_PATH --pyspark-driver-python=PYSPARK_DRIVER_PYTHON_PATH, "
                    "or set PYSPARK_PYTHON and PYSPARK_DRIVER_PYTHON in system env")
 
-def test_generate_benchmark_dataset():
-  generate_benchmark_dataset_carbon.generate_benchmark_dataset()
 
-def test_carbon_read():
-  for i in range(2):
-    print("\n number of " + str(i))
-    carbon_read_from_local.just_read()
-    carbon_read_from_local.just_read_batch()
+def test_full_tf_example(large_mock_mnist_data, tmpdir):
+  # First, generate mock dataset
+  dataset_url = 'file://{}'.format(tmpdir)
+  mnist_data_to_pycarbon_dataset(tmpdir, dataset_url, mnist_data=large_mock_mnist_data,
+                                 spark_master='local[1]', carbon_files_count=1)
+
+  start = time.time()
+  # Tensorflow train and test
+  tf_example.train_and_test(
+    dataset_url=dataset_url,
+    training_iterations=10,
+    batch_size=10,
+    evaluation_interval=10,
+    start=start
+  )
