@@ -1,4 +1,4 @@
-# Pycarbon Tensorflow, Pytorch, Mxnet Example (carbon dataset has non-unischema)
+# Pycarbon Tensorflow, Pytorch, Mxnet Example (carbon dataset does not have unischema)
 
 using make_batch_carbon_reader to read data
 
@@ -9,18 +9,18 @@ PYTHONPATH=~/dev/pycarbon  # replace with your pycarbon install path
 
 ## Generating a Pycarbon Dataset from MNIST Data
 
-This creates both a `train` and `test` pycarbon datasets in `/tmp/mnist_external`:
+This creates both a `train` and `test` carbon datasets in `/tmp/mnist_external`:
 
 ```bash
 python generate_external_mnist_carbon.py
 ```
 
-## TODO: Pytorch training using the Pycarboned MNIST Dataset
+## TODO: Pytorch training using the Carbon MNIST Dataset
 
 
-## Tensorflow training using the Pycarboned MNIST Dataset
+## Tensorflow training using the Carbon MNIST Dataset
 
-This will invoke a training run using MNIST data in pycarbon form,
+This will invoke a training run using MNIST carbondata,
 for 1 epochs, using a batch size of 100, and log every 10 intervals.
 
 ```bash
@@ -46,4 +46,4 @@ optional arguments:
                         accuracy (default: 10)
 ```
 
-## TODO: Mxnet training using the Pycarboned MNIST Dataset
+## TODO: Mxnet training using the Carbon MNIST Dataset
