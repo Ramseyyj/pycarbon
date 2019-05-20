@@ -1,6 +1,6 @@
 # pycarbon
 
-Optimized data access for AI based on CarbonData files, and we can use pycarbon lib to read carbondata, also prepare training data for different computing framwork, e.g. Tensorflow, Pytorch, Mxnet. 
+Optimized data access for AI based on CarbonData files, and we can use pycarbon lib to read carbondata, also prepare training data for different computing framework, e.g. Tensorflow, Pytorch, Mxnet. 
 
 ## pycarbon install
 
