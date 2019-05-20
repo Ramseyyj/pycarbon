@@ -14,6 +14,7 @@
 
 import collections
 import logging
+import warnings
 
 import six
 
@@ -33,6 +34,7 @@ from petastorm.workers_pool.ventilator import ConcurrentVentilator
 from pycarbon.carbon_arrow_reader_worker import ArrowCarbonReaderWorker
 from pycarbon.carbon_py_dict_reader_worker import PyDictCarbonReaderWorker
 from pycarbon.carbon import CarbonDataset
+from pycarbon.etl import carbon_dataset_metadata
 from pycarbon.etl.carbon_dataset_metadata import infer_or_load_unischema_carbon
 from pycarbon.etl.carbon_dataset_metadata import PycarbonMetadataError
 from pycarbon.carbon_local_memory_cache import LocalMemoryCache
@@ -157,16 +159,16 @@ def make_carbon_reader(dataset_url,
   # blocklet. Using PyDictCarbonReaderWorker or ReaderV2 implementation is very inefficient as it processes data on a
   # row by row basis. ArrowCarbonReaderWorker (used by make_batch_carbon_reader) is much more efficient in these cases.
   try:
-    infer_or_load_unischema_carbon(CarbonDataset(dataset_url,
-                                                 key=key,
-                                                 secret=secret,
-                                                 endpoint=endpoint,
-                                                 proxy=proxy,
-                                                 proxy_port=proxy_port,
-                                                 filesystem=filesystem))
+    carbon_dataset_metadata.get_schema_from_dataset_url_carbon(dataset_url,
+                                                               key=key,
+                                                               secret=secret,
+                                                               endpoint=endpoint,
+                                                               proxy=proxy,
+                                                               proxy_port=proxy_port,
+                                                               filesystem=filesystem)
   except PycarbonMetadataError:
-    raise RuntimeError('Currently make_reader supports reading only Pycarbon datasets. '
-                       'To read from a non-Pycarbon Carbon store use make_batch_reader')
+    raise RuntimeError('Currently make_carbon_reader supports reading only Pycarbon datasets(has unischema). '
+                       'To read from a non-Pycarbon Carbon store use make_batch_carbon_reader')
 
   if reader_engine == 'reader_v1':
     if reader_pool_type == 'thread':
@@ -312,6 +314,19 @@ def make_batch_carbon_reader(dataset_url,
                                       proxy_port=proxy_port,
                                       hdfs_driver=hdfs_driver)
   filesystem = resolver.filesystem()
+
+  try:
+    carbon_dataset_metadata.get_schema_from_dataset_url_carbon(dataset_url,
+                                                               key=key,
+                                                               secret=secret,
+                                                               endpoint=endpoint,
+                                                               proxy=proxy,
+                                                               proxy_port=proxy_port,
+                                                               filesystem=filesystem)
+    warnings.warn('Please use make_carbon_reader (instead of \'make_batch_carbon_reader\' function to read this dataset '
+                  'as it contains unischema file.')
+  except PycarbonMetadataError:
+    pass
 
   if cache_type is None or cache_type == 'null':
     cache = NullCache()
