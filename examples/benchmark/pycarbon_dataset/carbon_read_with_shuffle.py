@@ -24,33 +24,21 @@ import time
 import argparse
 import jnius_config
 
-from pycarbon.carbon_reader import make_carbon_reader, make_batch_carbon_reader
+from pycarbon.carbon_reader import make_carbon_reader
 
 from examples import DEFAULT_CARBONSDK_PATH
 
 
 def just_read(dataset_url='file:///tmp/benchmark_dataset'):
   result = list()
-  with make_carbon_reader(dataset_url, num_epochs=1, workers_count=16, shuffle_row_drop_partitions=10) as train_reader:
+  with make_carbon_reader(dataset_url, num_epochs=1, workers_count=10,
+                          shuffle_row_drop_partitions=5) as train_reader:
     i = 0
     for schema_view in train_reader:
       result.append(schema_view.id)
       i += 1
     print(i)
-    print(result)
-
-
-def just_read_batch(dataset_url='file:///tmp/benchmark_dataset'):
-  with make_batch_carbon_reader(dataset_url, num_epochs=1, workers_count=16,
-                                shuffle_row_drop_partitions=5) as train_reader:
-    result = list()
-    i = 0
-    for schema_view in train_reader:
-      i += len(schema_view.id)
-      for id in schema_view.id:
-        result.append(id)
-    print(i)
-    print(result)
+    return result
 
 
 def main():
@@ -68,8 +56,6 @@ def main():
   start = time.time()
 
   just_read()
-
-  just_read_batch()
 
   end = time.time()
   print("all time: " + str(end - start))

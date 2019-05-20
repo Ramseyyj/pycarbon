@@ -20,39 +20,20 @@
 from __future__ import division, print_function
 
 import time
-
 import argparse
 import jnius_config
 
-from petastorm.predicates import in_set
-from pycarbon.carbon_reader import make_carbon_reader, make_batch_carbon_reader
+from pycarbon.carbon_reader import make_carbon_reader
 
 from examples import DEFAULT_CARBONSDK_PATH
 
 
-def just_read(dataset_url='file:///tmp/benchmark_dataset'):
-  values = [5]
-  predicate = in_set(values, "id")
-
-  with make_carbon_reader(dataset_url, num_epochs=1, workers_count=16,
-                          predicate=predicate) as train_reader:
+def just_read_obs(dataset_url, key, secret, endpoint):
+  with make_carbon_reader(dataset_url, key=key, secret=secret, endpoint=endpoint, num_epochs=1,
+                          workers_count=16) as train_reader:
     i = 0
     for schema_view in train_reader:
-      assert schema_view.id == 5
       i += 1
-    assert i == 1
-    print(i)
-
-
-def just_read_batch(dataset_url='file:///tmp/benchmark_dataset'):
-  values = [5]
-  predicate = in_set(values, "id")
-  with make_batch_carbon_reader(dataset_url, num_epochs=1, workers_count=16,
-                                predicate=predicate) as train_reader:
-    i = 0
-    for schema_view in train_reader:
-      assert schema_view.id == 5
-      i += len(schema_view.id)
     print(i)
 
 
@@ -70,9 +51,11 @@ def main():
   print("Start")
   start = time.time()
 
-  just_read()
+  key = "OF0FTHGASIHDTRYHBCWU"
+  secret = "fWWjJwh89NFaMDPrFdhu68Umus4vftlIzcNuXvwV"
+  endpoint = "http://obs.cn-north-5.myhuaweicloud.com"
 
-  # just_read_batch()
+  just_read_batch_obs("s3a://modelarts-carbon/imageNet_resize/imageNet_whole_resize_small1/", key, secret, endpoint)
 
   end = time.time()
   print("all time: " + str(end - start))
