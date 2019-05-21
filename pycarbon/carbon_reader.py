@@ -471,17 +471,38 @@ class CarbonDataReader(object):
     # 3. Create a blocklet ventilator object
     normalized_shuffle_row_drop_partitions = \
       self._normalize_shuffle_options(shuffle_row_drop_partitions, self.carbon_dataset)
-    ventilator = self._create_ventilator(filtered_blocklet_indexes, shuffle_blocklets,
+    self.ventilator = self._create_ventilator(filtered_blocklet_indexes, shuffle_blocklets,
                                          normalized_shuffle_row_drop_partitions, num_epochs, worker_predicate,
                                          self._workers_pool.workers_count + _VENTILATE_EXTRA_BLOCKLETS)
 
     # 4. Start workers pool
     self._workers_pool.start(worker_class, (pyarrow_filesystem, dataset_path, storage_schema, self.ngram,
                                             self.carbon_dataset.pieces, cache, transform_spec),
-                             ventilator=ventilator)
+                             ventilator=self.ventilator)
     logger.debug('Workers pool started')
 
     self.last_row_consumed = False
+
+  def reset(self):
+    """Resets ``Reader`` state and allows to fetch more samples once the ``Reader`` finished reading all epochs,
+    as specified by the ``num_epochs`` parameter.
+
+    Once all samples were read from a reader, an attempt to fetch new sample (e.g. ``next(reader)`` would raise
+    ``StopIterationError``. You can reset the reader to the original state and restart reading samples
+    calling ``reset()``.
+
+    We do not support calling ``reset()`` until all samples were consumed. ``NotImplementedError``
+    will be raised if a user attempt to do so.
+
+    Calling reset after ``stop()`` was called has no effect.
+
+    :return: None
+    """
+    if not self.last_row_consumed:
+      raise NotImplementedError('Currently do not support resetting a reader while in the middle of iteration. '
+                                'You can call reset only after all samples were consumed.')
+    self.last_row_consumed = False
+    self.ventilator.reset()
 
   @property
   def batched_output(self):
