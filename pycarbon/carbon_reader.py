@@ -323,10 +323,8 @@ def make_batch_carbon_reader(dataset_url,
                                                                proxy=proxy,
                                                                proxy_port=proxy_port,
                                                                filesystem=filesystem)
-    warnings.warn('Please use make_carbon_reader (instead of \'make_batch_carbon_reader\' function to read this dataset. '
-                  'You may get unexpected results. '
-                  'Currently make_batch_carbon_reader supports reading only Carbon stores that contain '
-                  'standard Carbon data types and do not require pycarbon decoding(unischema).')
+    warnings.warn('Please use make_carbon_reader (instead of \'make_batch_carbon_reader\' function to read this dataset '
+                  'as it contains unischema file.')
   except PycarbonMetadataError:
     pass
 
