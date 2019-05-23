@@ -30,7 +30,7 @@ from examples import DEFAULT_CARBONSDK_PATH
 from examples.benchmark.external_dataset.generate_benchmark_external_dataset import ROW_COUNT
 
 
-def just_read_batch(dataset_url='file:///tmp/benchmark_dataset'):
+def just_read_batch(dataset_url='file:///tmp/benchmark_external_dataset'):
   with make_batch_carbon_reader(dataset_url, num_epochs=1) as train_reader:
     i = 0
     start = time.time()

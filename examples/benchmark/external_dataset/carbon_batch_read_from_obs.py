@@ -26,6 +26,7 @@ import jnius_config
 from pycarbon.carbon_reader import make_batch_carbon_reader
 
 from examples import DEFAULT_CARBONSDK_PATH
+from examples.benchmark.external_dataset.generate_benchmark_external_dataset import ROW_COUNT
 
 
 def just_read_batch_obs(dataset_url, key, secret, endpoint):
@@ -33,8 +34,10 @@ def just_read_batch_obs(dataset_url, key, secret, endpoint):
                                 workers_count=16) as train_reader:
     i = 0
     for schema_view in train_reader:
-      i += len(schema_view.imagename)
+      i += len(schema_view.id)
     print(i)
+
+    assert i == ROW_COUNT
 
 
 def main():
@@ -55,7 +58,7 @@ def main():
   secret = "fWWjJwh89NFaMDPrFdhu68Umus4vftlIzcNuXvwV"
   endpoint = "http://obs.cn-north-5.myhuaweicloud.com"
 
-  just_read_batch_obs("s3a://modelarts-carbon/imageNet_resize/imageNet_whole_resize_small1/", key, secret, endpoint)
+  just_read_batch_obs("s3a://modelarts-carbon/test/benchmark_external_dataset/", key, secret, endpoint)
 
   end = time.time()
   print("all time: " + str(end - start))

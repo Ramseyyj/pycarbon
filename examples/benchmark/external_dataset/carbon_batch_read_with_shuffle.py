@@ -29,7 +29,7 @@ from pycarbon.carbon_reader import make_batch_carbon_reader
 from examples import DEFAULT_CARBONSDK_PATH
 
 
-def just_read_batch(dataset_url='file:///tmp/benchmark_dataset'):
+def just_read_batch(dataset_url='file:///tmp/benchmark_external_dataset'):
   with make_batch_carbon_reader(dataset_url, num_epochs=1, workers_count=10,
                                 shuffle_row_drop_partitions=5) as train_reader:
     result = list()
