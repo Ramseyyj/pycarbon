@@ -21,7 +21,7 @@ from pyarrow.parquet import ParquetFile
 from six.moves.urllib.parse import urlparse
 
 from pycarbon.Constants import LOCAL_FILE_PREFIX
-from pycarbon.pysdk.CarbonReader import CarbonReader
+from pycarbon.pysdk.ArrowCarbonReader import ArrowCarbonReader
 from pycarbon.pysdk.CarbonSchemaReader import CarbonSchemaReader
 from pycarbon.pysdk.Configuration import Configuration
 
@@ -57,7 +57,7 @@ class CarbonDataset(object):
         raise ValueError('key, secret, endpoint should not be None')
 
       if proxy is None and proxy_port is None:
-        carbon_splits = CarbonReader().builder(self.path) \
+        carbon_splits = ArrowCarbonReader().builder(self.path) \
           .withHadoopConf("fs.s3a.access.key", key) \
           .withHadoopConf("fs.s3a.secret.key", secret) \
           .withHadoopConf("fs.s3a.endpoint", endpoint) \
@@ -71,7 +71,7 @@ class CarbonDataset(object):
         self.configuration = configuration
 
       elif proxy is not None and proxy_port is not None:
-        carbon_splits = CarbonReader().builder(self.path) \
+        carbon_splits = ArrowCarbonReader().builder(self.path) \
           .withHadoopConf("fs.s3a.access.key", key) \
           .withHadoopConf("fs.s3a.secret.key", secret) \
           .withHadoopConf("fs.s3a.endpoint", endpoint) \
@@ -123,7 +123,7 @@ class CarbonDataset(object):
         carbon_schema = CarbonSchemaReader().readSchema(self.file_path)
       else:
         carbon_schema = CarbonSchemaReader().readSchema(self.path)
-      carbon_splits = CarbonReader().builder(self.path) \
+      carbon_splits = ArrowCarbonReader().builder(self.path) \
         .getSplits(True)
 
       for split in carbon_splits:
@@ -196,7 +196,7 @@ class CarbonDatasetPiece(object):
 
   def read_all(self, columns):
     # rebuilding the reader as need to read specific columns
-    carbon_reader_builder = CarbonReader().builder(self.input_split)
+    carbon_reader_builder = ArrowCarbonReader().builder(self.input_split)
     carbon_schema_reader = CarbonSchemaReader()
     if columns is not None:
       carbon_reader_builder = carbon_reader_builder.projection(columns)
