@@ -48,7 +48,7 @@ some details are illustrated in `tf_example_carbon.py <https://github.com/Huawei
 
 #### Pytorch API
     with DataLoader(make_carbon_reader('file:///localpath/mnist/train', num_epochs=10,
-                            transform_spec=transform), batch_size=64) as train_    loader:
+                            transform_spec=transform), batch_size=64) as train_loader:
         train(model, device, train_loader, 10, optimizer, 1)
 
 some details are illustrated in `pytorch_example_carbon.py <https://github.com/HuaweiBigData/pycarbon/blob/master/examples/mnist/pytorch_example_carbon.py>`
