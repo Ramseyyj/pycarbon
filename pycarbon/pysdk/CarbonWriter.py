@@ -33,6 +33,14 @@ class CarbonWriter(object):
         self.CarbonWriterBuilder.writtenBy(name)
         return self
 
+    def withLoadOption(self, key, value):
+        self.CarbonWriterBuilder.withLoadOption(key, value)
+        return self
+
+    def withPageSizeInMb(self, value):
+        self.CarbonWriterBuilder.withPageSizeInMb(value)
+        return self
+
     def withHadoopConf(self, key, value):
         self.CarbonWriterBuilder.withHadoopConf(key, value)
         return self
