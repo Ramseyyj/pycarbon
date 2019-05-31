@@ -447,7 +447,6 @@ class WriteCarbonTest(unittest.TestCase):
     jsonSchema = "[{stringField:string},{shortField:short},{intField:int},{binaryField:binary},{txtField:string}]";
     path = "/tmp/data/writeCarbon" + str(time.time())
     jpg_path = "../../data/image/flowers"
-    # jpg_path = "/Users/xubo/Desktop/xubo/data/ModelArts/flowers"
 
     from jnius import autoclass
 
