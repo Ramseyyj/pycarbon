@@ -124,7 +124,7 @@ class CarbonDataset(object):
         try:
           carbon_schema = CarbonSchemaReader().readSchema(self.file_path)
         except:
-          raise Exception("readSchema has some errors")
+          raise Exception("readSchema has some errors: " + self.file_path)
       else:
         try:
           carbon_schema = CarbonSchemaReader().readSchema(self.path)
